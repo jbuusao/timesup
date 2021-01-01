@@ -87,11 +87,9 @@ export default function Login() {
                     New game
                   </Button>
                 ) : null}
-                {admin ? (
-                  <Typography value='cool'>
-                    {remainingWords.toString()}
-                  </Typography>
-                ) : null}
+                {/* {admin ? (
+                  <Typography>{remainingWords.toString()}</Typography>
+                ) : null} */}
               </CardActions>
             </Card>
           </div>

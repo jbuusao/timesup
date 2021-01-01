@@ -280,23 +280,23 @@ class App extends React.Component {
         <ThemeProvider>
           <div className={classes.root}>
             <Paper className={classes.paper}>
-              <Grid container>
-                <Grid item>
+              <Grid container spacing={[2]}>
+                <Grid item xs={12}>
                   <Login />
-                </Grid>
-                <Grid item>
-                  <GuessCard />
-                </Grid>
-                <Grid item>
-                  <Users />
                 </Grid>
                 {!this.state.admin &&
                 this.state.username &&
                 !this.state.wordsSubmitted ? (
-                  <Grid item>
+                  <Grid item xs={12}>
                     <WordsCard />
                   </Grid>
                 ) : null}
+                <Grid item xs={12}>
+                  <GuessCard />
+                </Grid>
+                <Grid item xs={12}>
+                  <Users />
+                </Grid>
                 {/* <Grid item>
                   <GetWordCard />
                 </Grid> */}
@@ -312,7 +312,8 @@ class App extends React.Component {
 const styles = (theme) => ({
   root: {
     // background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    flexGrow: 1,
+    flex: 1,
+    flexDirection: 'column',
   },
   paper: {
     // padding: theme.spacing(2),

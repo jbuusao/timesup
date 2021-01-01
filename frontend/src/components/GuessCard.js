@@ -12,6 +12,9 @@ const useStyles = makeStyles({
     flex: 1,
     flexDirection: 'row',
   },
+  card: {
+    background: 'lightblue',
+  },
   textField: {
     margin: '0 2px',
   },
@@ -44,7 +47,7 @@ export default function GuessCard() {
         return (
           <div className={classes.root}>
             {timer > 0 ? (
-              <Card>
+              <Card className={classes.card}>
                 <CardContent>
                   <Typography
                     className={classes.title}

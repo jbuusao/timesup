@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     maxWidth: 360,
+    margin: 0,
     backgroundColor: theme.palette.background.paper,
   },
   playIcon: {
