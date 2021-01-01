@@ -1,0 +1,52 @@
+org: jbuusao
+app: timesup
+service: timesup
+
+frameworkVersion: "2"
+
+inputs:
+  src: ./src
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: serverlessUser
+  stage: dev
+  region: us-east-1
+  environment:
+    playersTableName: ${self:custom.playersTableName}
+    sessionsTableName: ${self:custom.sessionsTableName}
+    sessionsIndexName: ${self:custom.sessionsIndexName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "*"
+
+plugins:
+  # - serverless-s3-sync
+  - serverless-webpack
+
+package:
+  individually: true
+
+custom:
+  playersTableName: timesup_players
+  sessionsTableName: timesup_sessions
+  sessionsIndexName: timesup_username_index
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+functions:
+  disconnect:
+    handler: lambdas/api/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+  message:
+    handler: lambdas/api/message.handler
+    events:
+      - websocket:
+          route: message
