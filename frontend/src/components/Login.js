@@ -3,6 +3,7 @@ import { Button, TextField, Typography } from '@material-ui/core'
 import ConnectIcon from '@material-ui/icons/PersonAdd'
 import RotateLeftIcon from '@material-ui/icons/RotateLeft'
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded'
+import PlayCircleFilledWhiteIcon from '@material-ui/icons/PlayCircleFilledWhite'
 import { AppContext } from '../contexts/AppContext'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
@@ -36,7 +37,7 @@ export default function Login() {
 
   return (
     <AppContext.Consumer>
-      {({ connectToServer, play, restart, admin, remainingWords, alert }) => {
+      {({ connectToServer, start, restart, admin, remainingWords, alert }) => {
         return (
           <div className={classes.root}>
             <Card>
@@ -70,29 +71,11 @@ export default function Login() {
                 />
                 {admin ? (
                   <Button
-                    startIcon={<PlayArrowRoundedIcon />}
+                    startIcon={<PlayCircleFilledWhiteIcon />}
                     color='secondary'
-                    onClick={() => play(1)}
+                    onClick={() => start()}
                   >
-                    1
-                  </Button>
-                ) : null}
-                {admin ? (
-                  <Button
-                    startIcon={<PlayArrowRoundedIcon />}
-                    color='secondary'
-                    onClick={() => play(2)}
-                  >
-                    2
-                  </Button>
-                ) : null}
-                {admin ? (
-                  <Button
-                    startIcon={<PlayArrowRoundedIcon />}
-                    color='secondary'
-                    onClick={() => play(3)}
-                  >
-                    3
+                    New round
                   </Button>
                 ) : null}
                 {admin ? (
@@ -101,7 +84,7 @@ export default function Login() {
                     color='secondary'
                     onClick={() => restart()}
                   >
-                    Restart
+                    New game
                   </Button>
                 ) : null}
                 {admin ? (

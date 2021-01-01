@@ -8,16 +8,16 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
-import PersonIcon from '@material-ui/icons/Person'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
+import ExposurePlus1Icon from '@material-ui/icons/ExposurePlus1'
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flex: 1,
-    flexDirection: 'row',
-    // backgroundColor: theme.palette.background.paper,
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
   },
   playIcon: {
     cursor: 'pointer',
@@ -29,24 +29,39 @@ export default function Users() {
 
   return (
     <AppContext.Consumer>
-      {({ users, admin, playUser }) => {
+      {({ playing, username, users, admin, playUser, foundWord }) => {
         return (
           <Card>
             {true ? (
               <CardContent>
-                <List className={classes.root}>
+                <List dense className={classes.root}>
                   {users
                     .filter((user) => user.username !== 'Admin')
+                    .sort((user1, user2) =>
+                      user1.points > user2.points ? -1 : 1
+                    )
                     .map((user) => (
                       <ListItem key={user.username}>
-                        <ListItemAvatar>
-                          <Avatar>
-                            <PersonIcon />
+                        <ListItemAvatar
+                          cursor='pointer'
+                          onClick={() => {
+                            if (playing && user.username !== username)
+                              foundWord(user.username)
+                          }}
+                        >
+                          <Avatar cursor='pointer'>
+                            {!playing || username === user.username ? null : (
+                              <ExposurePlus1Icon />
+                            )}
                           </Avatar>
                         </ListItemAvatar>
                         <ListItemText
                           primary={user.username}
-                          secondary={user.numberWords}
+                          secondary={
+                            admin
+                              ? `${user.points} (${user.numberWords})`
+                              : user.points
+                          }
                         />
                         {admin ? (
                           <ListItemIcon

@@ -12,6 +12,7 @@ import WordsCard from './components/WordsCard'
 import GuessCard from './components/GuessCard'
 
 const serverAPI = 'wss://odkdv001gb.execute-api.us-east-1.amazonaws.com/dev'
+const timerValueSeconds = 30
 
 class App extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class App extends React.Component {
       wordsTried: [],
       wordToGuessIndex: 0,
       adminConnectionID: 0,
+      playing: false,
       appState: AppState.AWAIT_PLAYERS,
       room: '',
       username: '',
@@ -49,14 +51,14 @@ class App extends React.Component {
   }
 
   doStopPlay = () => {
-    console.log(`Cleared timer ${this.state.timerID}`)
+    // console.log(`Cleared timer ${this.state.timerID}`)
     if (this.state.timerID) {
       clearInterval(this.state.timerID)
       const remainingWords = this.state.allWords.slice(
         this.state.wordToGuessIndex + 1
       )
-      console.log(`Remaining words ${remainingWords}`)
-      this.setState({ timerID: 0 })
+      // console.log(`Remaining words ${remainingWords}`)
+      this.setState({ timerID: 0, playing: false })
       this.sendToServer({
         stopPlayUser: this.state.username,
         room: this.state.room,
@@ -72,13 +74,8 @@ class App extends React.Component {
     this.setState({ wordToGuess: this.state.allWords[i], wordToGuessIndex: i })
   }
 
-  doRestart = () => {
-    this.setState({ remainingWords: this.state.randomWords })
-    this.getRandomWords()
-  }
-
-  doPlay = (phase) => {
-    console.log(`START PHASE ${phase} with words: ${this.state.allWords}`)
+  // Admin asked to start a new round
+  doStart = () => {
     this.setState({
       usersRound: this.state.users,
       remainingWords: this.state.allWords,
@@ -88,6 +85,12 @@ class App extends React.Component {
       getRandomWords: true,
       room: this.state.room,
     })
+  }
+
+  // Admin asked to restart a game
+  doRestart = () => {
+    this.setState({ remainingWords: this.state.randomWords })
+    this.getRandomWords()
   }
 
   shuffle = (array) => {
@@ -112,7 +115,7 @@ class App extends React.Component {
   // We must play
   handlePlay = (words, adminConnectionID) => {
     const shuffled = this.shuffle(words)
-    this.setState({ alert: shuffled, timer: 10 })
+    this.setState({ alert: shuffled, timer: timerValueSeconds })
     if (this.state.timerID === 0) {
       const timerId = setInterval(() => {
         this.setState({ timer: this.state.timer - 1 })
@@ -120,6 +123,7 @@ class App extends React.Component {
       const guess = shuffled[0]
       console.log(`Set timer ${timerId} for ${shuffled}`)
       this.setState({
+        playing: true,
         timerID: timerId,
         adminConnectionID: adminConnectionID,
         allWords: shuffled,
@@ -151,7 +155,11 @@ class App extends React.Component {
         appState: awaiting.length ? AppState.AWAIT_WORDS : AppState.ROUND1,
       })
     }
-    this.setState({ users: users })
+    this.setState({
+      users: users.sort((user1, user2) =>
+        user1.points > user2.points ? -1 : 1
+      ),
+    })
   }
 
   getRandomWords = () => {
@@ -170,6 +178,17 @@ class App extends React.Component {
       words: words,
     })
     this.setState({ wordsSubmitted: true })
+  }
+
+  // Whilst playing, the player signals that user has found a word
+  doFoundWord = (user) => {
+    this.sendToServer({
+      from: this.state.username,
+      room: this.state.room,
+      foundWord: user,
+    })
+    // Add some time to compensate for the time it took to click
+    this.setState({ timer: this.state.timer + 4 })
   }
 
   openConnection = () => {
@@ -228,6 +247,7 @@ class App extends React.Component {
           username: this.state.username,
           users: this.state.users,
           appState: this.state.appState,
+          playing: this.state.playing,
           timer: this.state.timer,
           wordsSubmitted: this.state.wordsSubmitted,
           admin: this.state.admin,
@@ -238,9 +258,10 @@ class App extends React.Component {
           // Actions
           connectToServer: this.doConnectToServer,
           submitWords: this.doSubmitWords,
-          restart: this.doRestart,
           playUser: this.doPlayUser,
-          play: this.doPlay,
+          start: this.doStart,
+          restart: this.doRestart,
+          foundWord: this.doFoundWord,
           stopPlay: this.doStopPlay,
           skipWord: this.doSkipWord,
         }}
