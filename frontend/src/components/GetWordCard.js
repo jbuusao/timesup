@@ -38,7 +38,7 @@ export default function GetWordCard() {
 
   return (
     <AppContext.Consumer>
-      {({ getRandomWords, randomWords }) => {
+      {({ randomWords }) => {
         return (
           <Card className={classes.root}>
             <CardContent>

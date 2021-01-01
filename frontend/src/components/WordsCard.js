@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
@@ -38,17 +38,27 @@ const useStyles = makeStyles({
   },
 })
 
-export default function WordsCard() {
+const WordsCard = () => {
   const classes = useStyles()
 
   const [words, setWords] = useState([])
   const [word, setWord] = useState('')
+
+  let textInput = null
+  useEffect(() => {
+    textInput.focus()
+  })
 
   const doAdd = () => {
     let w = words
     w.push(word)
     setWords(w)
     setWord('')
+  }
+
+  const doRemove = (toRemove) => {
+    let w = words.filter((name) => name !== toRemove)
+    setWords(w)
   }
 
   return (
@@ -64,13 +74,17 @@ export default function WordsCard() {
               >
                 Enter a word
               </Typography>
-              <TextField
+              <input
+                type='text'
                 value={word}
+                onSubmit={(e) => doAdd()}
                 onChange={(e) => setWord(e.target.value)}
+                ref={(item) => {
+                  textInput = item
+                }}
               />
               <Button
                 startIcon={<AddIcon />}
-                variant='contained'
                 color='primary'
                 onClick={() => doAdd()}
               >
@@ -88,7 +102,10 @@ export default function WordsCard() {
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary={word} secondary='' />
-                    <ListItemIcon className={classes.trash}>
+                    <ListItemIcon
+                      onClick={() => doRemove(word)}
+                      className={classes.trash}
+                    >
                       <DeleteIcon />
                     </ListItemIcon>
                   </ListItem>
@@ -106,3 +123,5 @@ export default function WordsCard() {
     </AppContext.Consumer>
   )
 }
+
+export default WordsCard

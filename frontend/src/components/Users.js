@@ -53,9 +53,7 @@ export default function Users() {
                             className={classes.playIcon}
                             onClick={() => playUser(user)}
                           >
-                            <PlayArrowRoundedIcon
-                              onClick={() => playUser(user)}
-                            />
+                            <PlayArrowRoundedIcon />
                           </ListItemIcon>
                         ) : null}
                       </ListItem>

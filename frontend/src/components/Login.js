@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, TextField } from '@material-ui/core'
+import { Button, TextField, Typography } from '@material-ui/core'
 import ConnectIcon from '@material-ui/icons/PersonAdd'
 import RotateLeftIcon from '@material-ui/icons/RotateLeft'
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded'
@@ -36,7 +36,7 @@ export default function Login() {
 
   return (
     <AppContext.Consumer>
-      {({ connectToServer, play, restart, admin, alert }) => {
+      {({ connectToServer, play, restart, admin, remainingWords, alert }) => {
         return (
           <div className={classes.root}>
             <Card>
@@ -103,6 +103,11 @@ export default function Login() {
                   >
                     Restart
                   </Button>
+                ) : null}
+                {admin ? (
+                  <Typography value='cool'>
+                    {remainingWords.toString()}
+                  </Typography>
                 ) : null}
               </CardActions>
             </Card>

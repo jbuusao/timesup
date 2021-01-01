@@ -10,7 +10,6 @@ import Login from './components/Login'
 import Users from './components/Users'
 import WordsCard from './components/WordsCard'
 import GuessCard from './components/GuessCard'
-import GetWordCard from './components/GetWordCard'
 
 const serverAPI = 'wss://odkdv001gb.execute-api.us-east-1.amazonaws.com/dev'
 
@@ -75,6 +74,7 @@ class App extends React.Component {
 
   doRestart = () => {
     this.setState({ remainingWords: this.state.randomWords })
+    this.getRandomWords()
   }
 
   doPlay = (phase) => {
@@ -88,12 +88,6 @@ class App extends React.Component {
       getRandomWords: true,
       room: this.state.room,
     })
-
-    // this.sendToServer({
-    //   from: this.state.username,
-    //   play: phase,
-    //   usersRound: this.state.usersRound,
-    // })
   }
 
   shuffle = (array) => {
@@ -118,7 +112,7 @@ class App extends React.Component {
   // We must play
   handlePlay = (words, adminConnectionID) => {
     const shuffled = this.shuffle(words)
-    this.setState({ alert: shuffled, timer: 30 })
+    this.setState({ alert: shuffled, timer: 10 })
     if (this.state.timerID === 0) {
       const timerId = setInterval(() => {
         this.setState({ timer: this.state.timer - 1 })
@@ -135,10 +129,13 @@ class App extends React.Component {
     }
   }
 
-  handleStopPlayUser = (username, remainingWords) => {
+  handleStopPlayUser = (username, words) => {
+    const played = this.state.usersPlayed.filter((name) => name !== username)
+    played.push(username)
+    console.log(played)
     this.setState({
-      remainingWords: remainingWords,
-      usersPlayed: this.state.usersPlayed.push(username),
+      remainingWords: words,
+      usersPlayed: played,
     })
   }
 
@@ -165,7 +162,8 @@ class App extends React.Component {
     })
   }
 
-  submitWords = (words) => {
+  // The user wants to suibmit her list of words
+  doSubmitWords = (words) => {
     this.sendToServer({
       from: this.state.username,
       room: this.state.room,
@@ -226,23 +224,24 @@ class App extends React.Component {
     return (
       <AppContext.Provider
         value={{
-          timer: this.state.timer,
-          wordsSubmitted: this.state.wordsSubmitted,
-          stopPlay: this.doStopPlay,
-          timerID: this.state.timerID,
-          alert: this.state.alert,
-          admin: this.state.admin,
-          appState: this.state.appState,
+          // Read only access to state
           username: this.state.username,
           users: this.state.users,
-          submitWords: this.submitWords,
-          connectToServer: this.doConnectToServer,
-          getRandomWords: this.getRandomWords,
+          appState: this.state.appState,
+          timer: this.state.timer,
+          wordsSubmitted: this.state.wordsSubmitted,
+          admin: this.state.admin,
           randomWords: this.state.randomWords,
-          play: this.doPlay,
+          remainingWords: this.state.remainingWords,
+          wordToGuess: this.state.wordToGuess,
+          alert: this.state.alert,
+          // Actions
+          connectToServer: this.doConnectToServer,
+          submitWords: this.doSubmitWords,
           restart: this.doRestart,
           playUser: this.doPlayUser,
-          wordToGuess: this.state.wordToGuess,
+          play: this.doPlay,
+          stopPlay: this.doStopPlay,
           skipWord: this.doSkipWord,
         }}
       >
