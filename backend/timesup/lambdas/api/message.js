@@ -6,6 +6,7 @@ const {
   getAllWords,
   playUser,
   StopPlayUser,
+  newGame,
 } = require("../common/actions");
 
 exports.handler = (event, context, callback) => {
@@ -109,6 +110,15 @@ exports.handler = (event, context, callback) => {
           stage
         );
       });
+    });
+  } else if (message.newGame) {
+    Dynamo.newGame(connectionID, message.room, () => {
+      broadcastConnectedUsersListForRoom(
+        message.room,
+        connectionID,
+        domainName,
+        stage
+      );
     });
   } else {
     console.log(

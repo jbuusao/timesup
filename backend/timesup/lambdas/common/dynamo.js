@@ -181,6 +181,43 @@ const Dynamo = {
       });
   },
 
+  async newGame(connectionID, room, next) {
+    return await client
+      .query({
+        TableName: playerTable,
+        KeyConditionExpression: "room = :room",
+        ExpressionAttributeValues: { ":room": room },
+      })
+      .promise()
+      .then((result) => {
+        result.Items.forEach((item) => {
+          item.data.points = 0;
+          item.data.words = [];
+          client
+            .put({
+              TableName: playerTable,
+              Item: {
+                room: room,
+                username: item.username,
+                connectionID: item.connectionID,
+                data: item.data,
+              },
+            })
+            .promise()
+            .then(() => {
+              console.log(`PLAYER POINT OK :${item.data}`);
+              if (next) next();
+            })
+            .catch((err) => {
+              console.log(`${connectionID} ADD POINT 1  ${err}`);
+            });
+        });
+      })
+      .catch((err) => {
+        console.log(`${connectionID} ADD POINT 0  ${err}`);
+      });
+  },
+
   async get(connectionID, TableName) {
     const params = {
       TableName,

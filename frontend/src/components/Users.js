@@ -36,7 +36,7 @@ export default function Users() {
               <CardContent>
                 <List dense className={classes.root}>
                   {users
-                    .filter((user) => user.username !== 'Admin')
+                    .filter((user) => user.username.toLowerCase() !== 'admin')
                     .sort((user1, user2) =>
                       user1.points > user2.points ? -1 : 1
                     )
@@ -59,6 +59,8 @@ export default function Users() {
                           primary={user.username}
                           secondary={
                             admin
+                              ? `${user.points} (${user.numberWords})`
+                              : username === user.username
                               ? `${user.points} (${user.numberWords})`
                               : user.points
                           }

@@ -89,8 +89,12 @@ class App extends React.Component {
 
   // Admin asked to restart a game
   doRestart = () => {
-    this.setState({ remainingWords: this.state.randomWords })
-    this.getRandomWords()
+    this.sendToServer({
+      newGame: true,
+      room: this.state.room,
+    })
+    // this.setState({ remainingWords: this.state.randomWords })
+    // this.getRandomWords()
   }
 
   shuffle = (array) => {
@@ -155,10 +159,13 @@ class App extends React.Component {
         appState: awaiting.length ? AppState.AWAIT_WORDS : AppState.ROUND1,
       })
     }
+    const me = users.find((user) => user.username === this.state.username)
+    const hasWords = me.numberWords !== 0
     this.setState({
       users: users.sort((user1, user2) =>
         user1.points > user2.points ? -1 : 1
       ),
+      wordsSubmitted: hasWords,
     })
   }
 
@@ -227,7 +234,11 @@ class App extends React.Component {
   doConnectToServer = (room, name) => {
     // this.openConnection()
     this.sendToServer({ connect: name, room: room })
-    this.setState({ room: room, username: name, admin: name === 'Admin' })
+    this.setState({
+      room: room,
+      username: name,
+      admin: name.toLowerCase() === 'admin',
+    })
     // Alert.alert(`Connected as ${name}...`)
   }
 
