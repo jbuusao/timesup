@@ -50,9 +50,11 @@ const WordsCard = () => {
   })
 
   const doAdd = () => {
-    let w = words
-    w.push(word)
-    setWords(w)
+    if (word && word.length) {
+      let w = words.filter((w) => w !== word)
+      w.push(word)
+      setWords(w)
+    }
     setWord('')
   }
 
@@ -72,13 +74,13 @@ const WordsCard = () => {
                 color='textSecondary'
                 gutterBottom
               >
-                Enter a word
+                Enter words (ADD) and then (SUBMIT)
               </Typography>
               <input
                 type='text'
                 value={word}
                 onSubmit={(e) => doAdd()}
-                onChange={(e) => setWord(e.target.value)}
+                onChange={(e) => setWord(e.target.value.trim())}
                 ref={(item) => {
                   textInput = item
                 }}
@@ -96,11 +98,6 @@ const WordsCard = () => {
               <List className={classes.root}>
                 {words.map((word) => (
                   <ListItem key={word}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <PersonIcon />
-                      </Avatar>
-                    </ListItemAvatar>
                     <ListItemText primary={word} secondary='' />
                     <ListItemIcon
                       onClick={() => doRemove(word)}
