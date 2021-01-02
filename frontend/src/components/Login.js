@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Button, TextField, Typography } from '@material-ui/core'
 import ConnectIcon from '@material-ui/icons/PersonAdd'
 import RotateLeftIcon from '@material-ui/icons/RotateLeft'
-import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded'
 import PlayCircleFilledWhiteIcon from '@material-ui/icons/PlayCircleFilledWhite'
 import { AppContext } from '../contexts/AppContext'
 import { makeStyles } from '@material-ui/core/styles'
@@ -37,61 +36,63 @@ export default function Login() {
 
   return (
     <AppContext.Consumer>
-      {({ connectToServer, start, restart, admin, remainingWords, alert }) => {
+      {({ connectToServer, start, restart, admin, playing }) => {
         return (
           <div className={classes.root}>
-            <Card>
-              <CardContent>
-                <TextField
-                  className={classes.textField}
-                  color='primary'
-                  type='string'
-                  value={room}
-                  placeholder='Room'
-                  onChange={(e) => {
-                    setRoom(e.target.value)
-                  }}
-                />
-                <TextField
-                  className={classes.textField}
-                  color='primary'
-                  type='string'
-                  value={name}
-                  placeholder='Username'
-                  onChange={(e) => {
-                    setName(e.target.value)
-                  }}
-                />
-              </CardContent>
-              <CardActions>
-                <Button
-                  startIcon={<ConnectIcon />}
-                  color='primary'
-                  onClick={() => connectToServer(room, name)}
-                />
-                {admin ? (
+            {!playing ? (
+              <Card>
+                <CardContent>
+                  <TextField
+                    className={classes.textField}
+                    color='primary'
+                    type='string'
+                    value={room}
+                    placeholder='Room'
+                    onChange={(e) => {
+                      setRoom(e.target.value)
+                    }}
+                  />
+                  <TextField
+                    className={classes.textField}
+                    color='primary'
+                    type='string'
+                    value={name}
+                    placeholder='Username'
+                    onChange={(e) => {
+                      setName(e.target.value)
+                    }}
+                  />
+                </CardContent>
+                <CardActions>
                   <Button
-                    startIcon={<PlayCircleFilledWhiteIcon />}
-                    color='secondary'
-                    onClick={() => start()}
-                  >
-                    New round
-                  </Button>
-                ) : null}
-                {admin ? (
-                  <Button
-                    startIcon={<RotateLeftIcon />}
-                    color='secondary'
-                    onClick={() => restart()}
-                  >
-                    New game
-                  </Button>
-                ) : null}
-                {/* {admin ? (
+                    startIcon={<ConnectIcon />}
+                    color='primary'
+                    onClick={() => connectToServer(room, name)}
+                  />
+                  {admin ? (
+                    <Button
+                      startIcon={<PlayCircleFilledWhiteIcon />}
+                      color='secondary'
+                      onClick={() => start()}
+                    >
+                      New round
+                    </Button>
+                  ) : null}
+                  {admin ? (
+                    <Button
+                      startIcon={<RotateLeftIcon />}
+                      color='secondary'
+                      onClick={() => restart()}
+                    >
+                      New game
+                    </Button>
+                  ) : null}
+                  {/* {admin ? (
                   <Typography>{remainingWords.toString()}</Typography>
                 ) : null} */}
-              </CardActions>
-            </Card>
+                </CardActions>
+              </Card>
+            ) : null}
           </div>
         )
       }}
